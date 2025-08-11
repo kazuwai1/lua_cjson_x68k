@@ -10,20 +10,20 @@ Makefile2.x68kを参照ください。x68kのgcc2環境でビルドしていま�
 * lua/cjsonディレクトリをluaのモジュールパスの通ったディレクトリにコピーします
  私の場合、A:\\lualib\\ にluaのモジュールを置いていますので、こんな感じになります：
  a:\\lualib\\
-       +- cjson
-       |    +- util.lua
-       +- json2lua.lua
-       +- lua2json.lua
-       +- (その他のluaのモジュールファイル)
+  +- cjson
+  |    +- util.lua
+  +- json2lua.lua
+  +- lua2json.lua
+  +- (その他のluaのモジュールファイル)
 * 環境変素 LUAPATH を設定する
-  上記のディレクトリにモジュールを配置した場合、以下のような設定でcjsonを使用できます。
-  LUA_PATH=;;A:\lualib\?.lua;A:\lualib\?.luac
+ 上記のディレクトリにモジュールを配置した場合、以下のような設定でcjsonを使用できます。
+ LUA_PATH=;;A:\\lualib\\?.lua;A:\\lualib\\?.luac
 
 ＃ 使う時の例
 * 実際にcjsonを使用する場合、cjsonを組み込んだluaで以下のようにモジュールを使用宣言します
-  local cjson = require "cjson"
-  local util = require "cjson.util"
-  local cjson_safe = require "cjson.safe"
+ local cjson = require "cjson"
+ local util = require "cjson.util"
+ local cjson_safe = require "cjson.safe"
 *　具体的なAPI仕様や最低限の使い方は [cjsonのドキュメントのAPI仕様のあたり](https://github.com/openresty/lua-cjson/blob/master/manual.adoc)を見てください
 
 # その他
