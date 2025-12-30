@@ -49,8 +49,8 @@
 #include <stdint.h>
 #endif
 #include <limits.h>
-#include <lua.h>
-#include <lauxlib.h>
+#include "lua.h"
+#include "lauxlib.h"
 
 #include "strbuf.h"
 #include "fpconv.h"
@@ -93,7 +93,7 @@ typedef union {
     unsigned char b[8];
     unsigned short w[4];
     unsigned long l[2];
-    unsigned long long int ll;
+/*    unsigned long long int ll; */
 /*    xieee_double_t ieee; */
 } x68double_t;
 
@@ -159,6 +159,9 @@ int isnan (double value)
 */
 
 #if LUA_VERSION_NUM >= 502
+#ifdef lua_objlen
+#undef lua_objlen
+#endif
 #define lua_objlen(L,i)		luaL_len(L, (i))
 #endif
 
@@ -856,7 +859,7 @@ static void json_append_object(lua_State *l, json_config_t *cfg,
 static int json_append_data(lua_State *l, json_config_t *cfg,
                              int current_depth, strbuf_t *json)
 {
-    int len;
+    int len=0;
     int as_array = 0;
     int has_metatable;
     int raw = 1;

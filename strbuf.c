@@ -89,8 +89,13 @@ strbuf_t *strbuf_new(size_t len)
 static inline void debug_stats(strbuf_t *s)
 {
     if (s->debug) {
+#if defined(human68k) || (__GNUC__ <= 2)
+        fprintf(stderr, "strbuf(%lx) reallocs: %d, length: %d, size: %d\n",
+                (long)s, s->reallocs, s->length, s->size);
+#else
         fprintf(stderr, "strbuf(%lx) reallocs: %d, length: %zd, size: %zd\n",
                 (long)s, s->reallocs, s->length, s->size);
+#endif
     }
 }
 
@@ -168,8 +173,13 @@ void strbuf_resize(strbuf_t *s, size_t len)
     newsize = calculate_new_size(s, len);
 
     if (s->debug > 1) {
+#if defined(human68k) && (__GNUC__ <= 2)
+        fprintf(stderr, "strbuf(%lx) resize: %d => %d\n",
+                (long)s, s->size, newsize);
+#else
         fprintf(stderr, "strbuf(%lx) resize: %zd => %zd\n",
                 (long)s, s->size, newsize);
+#endif
     }
 
     s->size = newsize;

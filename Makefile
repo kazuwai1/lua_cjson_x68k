@@ -11,15 +11,13 @@
 ##                          multi-threaded application. Requries _pthreads_.
 
 ##### Build defaults #####
-LUA_VERSION =       5.1
+LUA_VERSION =       5.5
 TARGET =            cjson.so
-PREFIX =            /usr/local
+PREFIX =            ..
 #CFLAGS =            -g -Wall -pedantic -fno-inline
-#CFLAGS =            -O3 -Wall -pedantic -DNDEBUG -g
-CFLAGS =            -O -Wall -pedantic -DNDEBUG
+CFLAGS =            -O3 -Wall -pedantic -DNDEBUG -g
 CJSON_CFLAGS =      -fpic
-#CJSON_LDFLAGS =     -shared
-CJSON_LDFLAGS = 
+CJSON_LDFLAGS =     -shared
 LUA_INCLUDE_DIR ?=   $(PREFIX)/include
 LUA_CMODULE_DIR ?=   $(PREFIX)/lib/lua/$(LUA_VERSION)
 LUA_MODULE_DIR ?=    $(PREFIX)/share/lua/$(LUA_VERSION)
@@ -54,6 +52,21 @@ AR= $(CC) -o
 #CJSON_CFLAGS =      -DDISABLE_INVALID_NUMBERS
 #CJSON_LDFLAGS =     -shared -L$(PREFIX)/lib -llua51
 #LUA_BIN_SUFFIX =    .lua
+
+## Human68k (x68k)
+LUA_VERSION = 5.5
+TARGET = lua_cjson.l
+PREFIX = ..
+CC = gcc2
+AR = oar -c
+CFLAGS = -O2 -fomit-frame-pointer -fstrength-reduce -finline-functions -m68000 -Wall -pedantic -DNDEBUG
+CJSON_CFLAGS =
+CJSON_LDFLAGS =
+LUA_INCLUDE_DIR =   $(PREFIX)/include
+LUA_CMODULE_DIR =   $(PREFIX)/lib/lua/$(LUA_VERSION)
+LUA_MODULE_DIR =    $(PREFIX)/share/lua/$(LUA_VERSION)
+LUA_BIN_DIR =       $(PREFIX)/bin
+LUA_BIN_SUFFIX =    .lua
 
 ##### Number conversion configuration #####
 
@@ -101,25 +114,23 @@ all: $(TARGET)
 doc: manual.html performance.html
 
 $(TARGET): $(OBJS)
-	$(AR) $@ $(LDFLAGS) $(CJSON_LDFLAGS) $(OBJS)
+	$(AR) $(LDFLAGS) $(CJSON_LDFLAGS) $@ $(OBJS)
+#	$(AR) $@ $(LDFLAGS) $(CJSON_LDFLAGS) $(OBJS)
 
 install: $(TARGET)
-	mkdir -p $(DESTDIR)$(LUA_CMODULE_DIR)
-	rm -f $(DESTDIR)$(LUA_CMODULE_DIR)/$(TARGET)
-	cp $(TARGET) $(DESTDIR)$(LUA_CMODULE_DIR)
-	chmod $(EXECPERM) $(DESTDIR)$(LUA_CMODULE_DIR)/$(TARGET)
+	mkdir.x -p $(LUA_CMODULE_DIR)
+	rm -f $(LUA_CMODULE_DIR)/$(TARGET)
+	cp -p -m $(EXECPERM) $(TARGET) $(LUA_CMODULE_DIR)
+	cp -p -m $(EXECPERM) $(TARGET) ../lib/
 
 install-extra:
-	mkdir -p $(DESTDIR)$(LUA_MODULE_DIR)/cjson/tests \
-		$(DESTDIR)$(LUA_BIN_DIR)
-	cp lua/cjson/util.lua $(DESTDIR)$(LUA_MODULE_DIR)/cjson
-	chmod $(DATAPERM) $(DESTDIR)$(LUA_MODULE_DIR)/cjson/util.lua
-	cp lua/lua2json.lua $(DESTDIR)$(LUA_BIN_DIR)/lua2json$(LUA_BIN_SUFFIX)
-	chmod $(EXECPERM) $(DESTDIR)$(LUA_BIN_DIR)/lua2json$(LUA_BIN_SUFFIX)
-	cp lua/json2lua.lua $(DESTDIR)$(LUA_BIN_DIR)/json2lua$(LUA_BIN_SUFFIX)
-	chmod $(EXECPERM) $(DESTDIR)$(LUA_BIN_DIR)/json2lua$(LUA_BIN_SUFFIX)
-	cd tests; cp $(TEST_FILES) $(DESTDIR)$(LUA_MODULE_DIR)/cjson/tests
-	cd tests; chmod $(DATAPERM) $(TEST_FILES); chmod $(EXECPERM) *.lua *.pl
+	mkdir.x -p $(LUA_MODULE_DIR)/cjson/tests $(LUA_BIN_DIR)
+	cp -p -m $(DATAPERM) lua/cjson/util.lua $(LUA_MODULE_DIR)/cjson
+	cp -p -m $(EXECPERM) lua/lua2json.lua $(LUA_BIN_DIR)/lua2json$(LUA_BIN_SUFFIX)
+	cp -p -m $(EXECPERM) lua/json2lua.lua $(LUA_BIN_DIR)/json2lua$(LUA_BIN_SUFFIX)
+#	cd tests; cp $(TEST_FILES) $(DESTDIR)$(LUA_MODULE_DIR)/cjson/tests
+#	cd tests; chmod $(DATAPERM) $(TEST_FILES); chmod $(EXECPERM) *.lua *.pl
 
 clean:
-	rm -f *.o $(TARGET)
+	rm -f $(OBJS) $(TARGET)
+
